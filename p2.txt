@@ -1,0 +1,16 @@
+#Definicion de jugadores
+addi $s5, $zero, 1 #Jugador con X
+addi $s6, $zero, 2 #Jugador con O
+
+#Ejecucion de jugadas
+addi $s5, $zero, 9 #Guardo X en la posicion 9
+addi $s6, $zero, 2 #Guardo O en la posicion 2
+addi $s5, $zero, 8
+addi $s6, $zero, 1
+
+#Con subi borro la jugada guardada en la posicion 9
+#Si fuese $s6 esta instruccion no debiese tener efecto, ya que la realizo $s5
+subi $s5, $zero, 9
+addi $s6, $zero, 6
+addi $s6, $zero, 3
+addi $s6, $zero, 7

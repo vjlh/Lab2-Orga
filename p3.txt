@@ -1,0 +1,20 @@
+#Definicion de jugadores
+addi $s5, $zero, 1 #Jugador con X
+addi $s6, $zero, 2 #Jugador con O
+
+#Definicion de espacio para almacenar Gato
+addi $sp, $sp, -36 #Arreglo con 9 posiciones posibles
+
+#Lecturas y jugadas
+sw $s6, 12($sp)
+sw $s5, 8($sp)
+sw $s6, 20($sp)
+sw $s6, 28($sp)
+addi $s5, $zero, 1
+addi $s6, $zero, 2
+subi $s5, $zero, 3
+addi $s6, $zero, 3
+subi $s6, $zero, 4
+addi $s5, $zero, 4
+addi $s5, $zero, 5
+sw $s5, 32($sp)
