@@ -6,7 +6,7 @@ int main(int argc, char** argv)
 
 	leerArchivosYGuardarDatos();
 
-	newDesarrollo();
+	asignando_jugador();
 
 	desarrolloDeInstrucciones();
 	comprobarGanador();

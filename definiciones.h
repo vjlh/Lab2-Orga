@@ -39,7 +39,7 @@ char *NOMBRE_ARCHIVO_2;
 
 void escribir_archivo(FILE *archivo);
 void leerArchivosYGuardarDatos();
-void newDesarrollo();
+void asignando_jugador();
 void desarrolloDeInstrucciones();
 void escribir_archivo1();
 void recibirNombreArchivo();

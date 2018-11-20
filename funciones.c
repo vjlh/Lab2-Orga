@@ -120,10 +120,6 @@ void leerArchivosYGuardarDatos()		//Esta funcion se encarga del proceso de lectu
 		if(strcmp(REGISTROS_NOMBRES[i],listaDatos[1].dato1)==0)
 			REGISTROS_VALOR[i] = atoi(listaDatos[1].dato3);
 	}
-	/*for (int i = 0; i < 9; ++i)
-	{
-		printf("%s:%d\n",REGISTROS_NOMBRES[i],REGISTROS_VALOR[i]);
-	}*/
 
 }
 void identificandoFormato(int addis,int sws)
@@ -138,7 +134,7 @@ void identificandoFormato(int addis,int sws)
 		FORMATO = 3;		
 	printf("EL FORMATO ES: %i \n",FORMATO);
 }
-void newDesarrollo()
+void asignando_jugador()
 {
 	strcpy(jugadores[0].nombre,listaDatos[0].dato1);
 	jugadores[0].tipo = atoi(listaDatos[0].dato3);
@@ -201,6 +197,7 @@ void desarrolloDeInstrucciones()
 
 	while (aux1<NINTRUCCIONES) //Con este while se irá recorriendo la estructura, donde aux irá desde ¡
 	{						   //Hasta el numero total de instrucciones que fue contado al comienzo de esta función
+		IF++;
 		funcion = listaDatos[aux1].funcion;
 		if ((strcmp(funcion,"addi"))==0 || (strcmp(funcion,"subi"))==0)
 		{
@@ -208,7 +205,7 @@ void desarrolloDeInstrucciones()
 			dato2 = listaDatos[aux1].dato2;
 			dato3 = listaDatos[aux1].dato3;
 			num3 = abs(atoi(dato3));
-
+			ID++;	
 
 			if((strcmp(funcion,"addi"))==0)
 			{
@@ -222,6 +219,9 @@ void desarrolloDeInstrucciones()
 						jugadores[i].aux = jugadores[i].aux + 1;
 					}
 				}
+				EX++;
+				WB++;	
+
 			}
 			else if((strcmp(funcion,"subi"))==0)
 			{
@@ -231,9 +231,13 @@ void desarrolloDeInstrucciones()
 					{
 						if (contiene(i,num3-1)==1)
 							remover_jugada(i,num3-1);
+						
 					}
 				}
-			}			
+				EX++;
+				WB++;
+			}
+					
 		}								//Registros despues de pasar por esta funcion, independiente de si haya o no
 										//modificado uno de estos	
 		else if (strcmp(funcion,"sw")== 0)
@@ -241,18 +245,22 @@ void desarrolloDeInstrucciones()
 			dato1 = listaDatos[aux1].dato1;
 			dato2 = listaDatos[aux1].dato2;
 			strcpy(temp,dato2);
-
+			ID++;
 			dato2temp = strtok(temp,"(");
 			temporal = atoi(dato2temp);
+			EX++;
 
 			if(temporal%4 == 0)
 			{	
+				MEM++;
 				for (k = 0; k < 2; ++k)
 					if (strcmp(dato1,jugadores[k].nombre)==0)
 					{
 						jugadores[k].jugadas[jugadores[k].aux] = (temporal/4);
 						jugadores[k].aux = jugadores[k].aux +1;
 					}
+				WB++;	
+
 			}		
 			else if(temporal%4 != 0)
 			{
@@ -267,18 +275,22 @@ void desarrolloDeInstrucciones()
 			dato1 = listaDatos[aux1].dato1;
 			dato2 = listaDatos[aux1].dato2;
 			strcpy(temp,dato2);
+			ID++;
 
 			dato2temp = strtok(temp,"(");
 			temporal = atoi(dato2temp);
-
+			EX++;
 			if(temporal%4 == 0)
 			{	
+				MEM++;
 				for (k = 0; k < 31; ++k)
 					if (strcmp(dato1,REGISTROS_NOMBRES[k])==0)
 					{	
+
 						REGISTROS_VALOR[k] = TABLERO[(temporal/4)];
 						break;
 					}
+
 			}
 			else if(temporal%4 != 0)
 			{
