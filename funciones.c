@@ -112,10 +112,6 @@ void leerArchivosYGuardarDatos()		//Esta funcion se encarga del proceso de lectu
 	MEM=0;
 	WB=0;
 
-	for (int i = 0; i < NINTRUCCIONES; ++i)
-	{
-		printf("%s, %s, %s, %s \n", listaDatos[i].funcion,listaDatos[i].dato1,listaDatos[i].dato2,listaDatos[i].dato3);
-	}
 	for (int i = 0; i < 9; ++i)
 	{	
 		if(strcmp(REGISTROS_NOMBRES[i],listaDatos[0].dato1)==0)
@@ -146,8 +142,11 @@ void newDesarrollo()
 {
 	strcpy(jugadores[0].nombre,listaDatos[0].dato1);
 	jugadores[0].tipo = atoi(listaDatos[0].dato3);
+	jugadores[0].aux = 0;
 	strcpy(jugadores[1].nombre,listaDatos[1].dato1);
 	jugadores[1].tipo = atoi(listaDatos[1].dato3);
+	jugadores[1].aux = 0;
+
 
 	for (int i = 0; i < 2; ++i)
 	{
@@ -161,8 +160,8 @@ void desarrolloDeInstrucciones()
 	//Haciendo lo que cada instrucción requiere, por ejemplo si es un add, sumará, un sub restará,etc
 	
 	//Declaracion de variables a utilizar	
-	int i, k, aux1, total, num2, num3, posicion, temporal;
-	char *funcion, *dato1, *dato2, *dato3, estado, *dato2temp, temp[10];
+	int i, k, aux1, num3, temporal;
+	char *funcion, *dato1, *dato2, *dato3, *dato2temp, temp[10];
 	//FILE* solucion;
 	//solucion = fopen("salida2.csv","wt");
 	//fputs("Registro/Instruccion;",solucion);	
@@ -179,9 +178,9 @@ void desarrolloDeInstrucciones()
 
 		if(num3 == 36)
 		{
-			ARREGLO_SP = (int*)malloc(sizeof(int)*9);
+			TABLERO = (int*)malloc(sizeof(int)*9);
 			for (i = 0; i < 9; ++i)
-				ARREGLO_SP[i] = 0;
+				TABLERO[i] = 0;
 			aux1 = 3;
 		}
 		else
@@ -192,13 +191,17 @@ void desarrolloDeInstrucciones()
 	}
 
 	else
+	{
+		TABLERO = (int*)malloc(sizeof(int)*9);
+			for (i = 0; i < 9; ++i)
+				TABLERO[i] = 0;
 		aux1 = 2;
+	}
 	
 
-	while (aux1<NINTRUCCIONES) //Con este while se irá recorriendo la estructura, donde aux irá desde cero
+	while (aux1<NINTRUCCIONES) //Con este while se irá recorriendo la estructura, donde aux irá desde ¡
 	{						   //Hasta el numero total de instrucciones que fue contado al comienzo de esta función
 		funcion = listaDatos[aux1].funcion;
-
 		if ((strcmp(funcion,"addi"))==0 || (strcmp(funcion,"subi"))==0)
 		{
 			dato1 = listaDatos[aux1].dato1;
@@ -206,16 +209,31 @@ void desarrolloDeInstrucciones()
 			dato3 = listaDatos[aux1].dato3;
 			num3 = abs(atoi(dato3));
 
-			for (int i = 0; i < 2; ++i)
-				if (strcmp(dato2,jugadores[i].nombre)==0)
-					num2 = jugadores[i].tipo;
 
 			if((strcmp(funcion,"addi"))==0)
-				TABLERO[num3] = num2;
-
-			else
-				TABLERO[num3] = 0;
-
+			{
+				int jug1 = contiene(0,num3-1);
+				int jug2 = contiene(1,num3-1);
+				for (int i = 0; i < 2; ++i)
+				{
+					if (strcmp(dato1,jugadores[i].nombre)==0 && jug1 == 0 && jug2 == 0)
+					{
+						jugadores[i].jugadas[jugadores[i].aux] = num3-1;
+						jugadores[i].aux = jugadores[i].aux + 1;
+					}
+				}
+			}
+			else if((strcmp(funcion,"subi"))==0)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					if (strcmp(dato1,jugadores[i].nombre)==0)
+					{
+						if (contiene(i,num3-1)==1)
+							remover_jugada(i,num3-1);
+					}
+				}
+			}			
 		}								//Registros despues de pasar por esta funcion, independiente de si haya o no
 										//modificado uno de estos	
 		else if (strcmp(funcion,"sw")== 0)
@@ -231,14 +249,16 @@ void desarrolloDeInstrucciones()
 			{	
 				for (k = 0; k < 2; ++k)
 					if (strcmp(dato1,jugadores[k].nombre)==0)
-						ARREGLO_SP[(temporal/4)]= jugadores[k].tipo;
+					{
+						jugadores[k].jugadas[jugadores[k].aux] = (temporal/4);
+						jugadores[k].aux = jugadores[k].aux +1;
+					}
 			}		
 			else if(temporal%4 != 0)
 			{
 				printf("No se puede ejecutar el programa, ya que StoreWord presenta un error en uno de sus parametros\n");
 				exit(0);
 			}		
-	
 
 		}		
 			
@@ -256,7 +276,7 @@ void desarrolloDeInstrucciones()
 				for (k = 0; k < 31; ++k)
 					if (strcmp(dato1,REGISTROS_NOMBRES[k])==0)
 					{	
-						REGISTROS_VALOR[k] = ARREGLO_SP[(temporal/4)];
+						REGISTROS_VALOR[k] = TABLERO[(temporal/4)];
 						break;
 					}
 			}
@@ -269,7 +289,108 @@ void desarrolloDeInstrucciones()
 		}
 		aux1++;
 	}
+
+	for (int i = 0; i < 2; ++i)
+	{
+		printf("\nLas jugadas del jugador %i son: \n",i);
+		for (int j = 0; j < jugadores[i].aux; ++j)
+			printf("%i-",jugadores[i].jugadas[j]);
+
+	}
+	for (int i = 0; i < jugadores[0].aux; ++i)
+		TABLERO[jugadores[0].jugadas[i]] = 1;
+
+	for (int i = 0; i < jugadores[1].aux; ++i)
+		TABLERO[jugadores[1].jugadas[i]] = 2;	
 }
+void remover_jugada(int jugador, int jugada)
+{
+	int aux = 0;
+
+	for (int i = 0; i < jugadores[jugador].aux; ++i)
+	{
+		if(jugadores[jugador].jugadas[i] == jugada)
+		{
+			jugadores[jugador].jugadas[aux] = jugadores[jugador].jugadas[i+1];
+			i++;
+		}
+		else
+			jugadores[jugador].jugadas[aux] = jugadores[jugador].jugadas[i];
+		aux++;
+	}
+	jugadores[jugador].aux = jugadores[jugador].aux-1;
+
+}
+
+int contiene(int jugador, int jugada)
+{
+	for (int i = 0; i < jugadores[jugador].aux; ++i)
+	{
+		if(jugadores[jugador].jugadas[i] == jugada)
+			return 1;
+	}
+	return 0;	
+}
+
+void comprobarGanador()
+{
+	int ganador = 0;
+	bool l1 = (TABLERO[0] == TABLERO[1] && TABLERO[1] == TABLERO[2]);
+	bool l2 = (TABLERO[3] == TABLERO[4] && TABLERO[4] == TABLERO[5]);
+	bool l3 = (TABLERO[6] == TABLERO[7] && TABLERO[7] == TABLERO[8]);
+
+	bool c1 = (TABLERO[0] == TABLERO[3] && TABLERO[3] == TABLERO[6]);
+	bool c2 = (TABLERO[1] == TABLERO[4] && TABLERO[4] == TABLERO[7]);
+	bool c3 = (TABLERO[2] == TABLERO[5] && TABLERO[5] == TABLERO[8]);
+
+	bool d1 = (TABLERO[0] == TABLERO[4] && TABLERO[4] == TABLERO[8]);
+	bool d2 = (TABLERO[2] == TABLERO[4] && TABLERO[4] == TABLERO[6]);
+
+	if(l1)
+		ganador = TABLERO[0];
+
+	else if(l2)
+		ganador = TABLERO[3];
+
+	else if(l3)
+		ganador = TABLERO[6];
+
+	else if(c1)	
+		ganador = TABLERO[0];
+
+	else if(c2)
+		ganador = TABLERO[1];
+
+	else if(c3)	
+		ganador = TABLERO[2];
+
+	else if(d1)	
+		ganador = TABLERO[0];
+
+	else if(d2)	
+		ganador = TABLERO[2];
+
+	printf("El ganador es el jugador %i\n",ganador);
+	for (int i = 0; i < 9; ++i)
+	{
+		if(i%3 == 0)
+			printf("\n");
+		printf("|%i|",TABLERO[i]);
+	}
+	printf("\n");
+
+}
+
+/*
+Entra: [3, 5, 7, 1, 2]
+jugada = 3
+1º ciclo i = 0
+	[5,5,7,1,2]
+2º ciclo i = 2
+	[]	
+
+	
+*/
 /*void escribir_archivo(FILE *archivo) 
 { //Escribe los valores de los 32 registros cada vez que se le llama, que es cada vez que se ejecuta una instruccion
 	int i; //Estos valores van siendo escritos en el archivo de salida 1
@@ -347,7 +468,7 @@ void liberarMemoria()
 {
 	free(listaDatos);
 	free(REGISTROS_VALOR);
-	free(ARREGLO_SP);
+	free(TABLERO);
 	free(NOMBRE_ARCHIVO_1);
 	free(NOMBRE_ARCHIVO_2);
 }

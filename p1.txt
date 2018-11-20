@@ -4,13 +4,13 @@ addi $s6, $zero, 2 #Jugador con O
 #Definici ́on de espacio para almacenar Gato
 addi $sp, $sp, -36 #Arreglo con 9 posiciones posibles
 #Jugadas de X
-sw $s5, 0($sp) #Guardo X en la posici ́on 1
+sw $s5, 0($sp) #Guardo X en la posicion 1
 sw $s5, 8($sp)
 sw $s5, 16($sp)
 sw $s5, 24($sp)
 sw $s5, 32($sp)
 #Jugadas de O
-sw $s6, 12($sp) #Guardo O en la posici ́on 4
+sw $s6, 12($sp) #Guardo O en la posicion 4
 sw $s6, 4($sp)
 sw $s6, 20($sp)
 sw $s6, 28($sp)

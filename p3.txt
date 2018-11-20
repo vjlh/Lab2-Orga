@@ -6,15 +6,15 @@ addi $s6, $zero, 2 #Jugador con O
 addi $sp, $sp, -36 #Arreglo con 9 posiciones posibles
 
 #Lecturas y jugadas
-sw $s6, 12($sp)
-sw $s5, 8($sp)
-sw $s6, 20($sp)
-sw $s6, 28($sp)
-addi $s5, $zero, 1
-addi $s6, $zero, 2
-subi $s5, $zero, 3
-addi $s6, $zero, 3
-subi $s6, $zero, 4
-addi $s5, $zero, 4
-addi $s5, $zero, 5
-sw $s5, 32($sp)
+sw $s6, 12($sp)   # O en 4
+sw $s5, 8($sp)    # X en 3
+sw $s6, 20($sp)   # O en 6
+sw $s6, 28($sp)   # O en 8
+addi $s5, $zero, 1 # X en 1
+addi $s6, $zero, 2 # O en 2
+subi $s5, $zero, 3 # X borra en 3  
+addi $s6, $zero, 3 # O en 3
+subi $s6, $zero, 4 # O borra en 4
+addi $s5, $zero, 4 # X en 4
+addi $s5, $zero, 5 # X en 5
+sw $s5, 32($sp)    # X en 9

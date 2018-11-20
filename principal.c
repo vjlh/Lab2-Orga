@@ -9,18 +9,21 @@ int main(int argc, char** argv)
 	newDesarrollo();
 
 	desarrolloDeInstrucciones();
+	comprobarGanador();
 
-	for (int i = 0; i < 9; ++i)
+
+
+	/*for (int i = 0; i < 10; ++i)
 	{
 		if(i%3 == 0)
 			printf("\n");
-		if (ARREGLO_SP[i] == 1)
+		if (TABLERO[i] == 1)
 			printf("|X|");
-		else if (ARREGLO_SP[i] == 2)
+		else if (TABLERO[i] == 2)
 			printf("|O|");
 			
 	}
-			printf("\n\n");
+	printf("\n\n");*/
 
 	//escribir_archivo1();
 	//liberarMemoria();
