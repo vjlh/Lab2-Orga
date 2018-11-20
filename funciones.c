@@ -1,10 +1,6 @@
 #include "definiciones.h"
 char REGISTROS_NOMBRES[9][6] = {"$zero","$s1","$s2","$s3","$s4","$s5","$s6","$s7","$sp"};
-int IF;
-int ID;
-int EX;
-int MEM;
-int WB;
+
 
 void leerArchivosYGuardarDatos()		//Esta funcion se encarga del proceso de lectura y obtencion de los datos del archivo
 {										//primero cuenta cuantas lineas tiene el archivo	
@@ -35,10 +31,6 @@ void leerArchivosYGuardarDatos()		//Esta funcion se encarga del proceso de lectu
 
 	NINTRUCCIONES = contador;
 	listaDatos = (Datos*)malloc(sizeof(Datos)*NINTRUCCIONES);
-	REGISTROS_VALOR = (int*)malloc(sizeof(int)*9);
-
-	for (i = 0; i < 9; ++i)
-		REGISTROS_VALOR[i] = 0;
 	
 	archivo_instrucciones = fopen(NOMBRE_ARCHIVO_1,"r");
 	
@@ -112,15 +104,6 @@ void leerArchivosYGuardarDatos()		//Esta funcion se encarga del proceso de lectu
 	MEM=0;
 	WB=0;
 
-	for (int i = 0; i < 9; ++i)
-	{	
-		if(strcmp(REGISTROS_NOMBRES[i],listaDatos[0].dato1)==0)
-			REGISTROS_VALOR[i] = atoi(listaDatos[0].dato3);
-		
-		if(strcmp(REGISTROS_NOMBRES[i],listaDatos[1].dato1)==0)
-			REGISTROS_VALOR[i] = atoi(listaDatos[1].dato3);
-	}
-
 }
 void identificandoFormato(int addis,int sws)
 {
@@ -152,20 +135,9 @@ void asignando_jugador()
 }
 void desarrolloDeInstrucciones()
 {
-	//esta funcion es la encargada de leer las instrucciones almacenadas por la funcion anterior una a una
-	//Haciendo lo que cada instrucción requiere, por ejemplo si es un add, sumará, un sub restará,etc
 	
-	//Declaracion de variables a utilizar	
 	int i, k, aux1, num3, temporal;
 	char *funcion, *dato1, *dato2, *dato3, *dato2temp, temp[10];
-	//FILE* solucion;
-	//solucion = fopen("salida2.csv","wt");
-	//fputs("Registro/Instruccion;",solucion);	
-
-	//for (i = 0; i < 31; ++i)
-	//	fprintf(solucion,"%s;",REGISTROS_NOMBRES[i]);
-
-	//fputc('\n',solucion);
 	
 	if((FORMATO == 1 || FORMATO == 3) && strcmp(listaDatos[2].dato1,"$sp")==0)
 	{
@@ -258,9 +230,7 @@ void desarrolloDeInstrucciones()
 					{
 						jugadores[k].jugadas[jugadores[k].aux] = (temporal/4);
 						jugadores[k].aux = jugadores[k].aux +1;
-					}
-				WB++;	
-
+					}	
 			}		
 			else if(temporal%4 != 0)
 			{
@@ -269,36 +239,7 @@ void desarrolloDeInstrucciones()
 			}		
 
 		}		
-			
-		else if (strcmp(funcion,"lw")== 0)
-		{	
-			dato1 = listaDatos[aux1].dato1;
-			dato2 = listaDatos[aux1].dato2;
-			strcpy(temp,dato2);
-			ID++;
-
-			dato2temp = strtok(temp,"(");
-			temporal = atoi(dato2temp);
-			EX++;
-			if(temporal%4 == 0)
-			{	
-				MEM++;
-				for (k = 0; k < 31; ++k)
-					if (strcmp(dato1,REGISTROS_NOMBRES[k])==0)
-					{	
-
-						REGISTROS_VALOR[k] = TABLERO[(temporal/4)];
-						break;
-					}
-
-			}
-			else if(temporal%4 != 0)
-			{
-				printf("No se puede ejecutar el programa, ya que LoadWord presenta un error en uno de sus parametros\n");
-				exit(0);
-			}			
-
-		}
+		
 		aux1++;
 	}
 
@@ -382,70 +323,46 @@ void comprobarGanador()
 	else if(d2)	
 		ganador = TABLERO[2];
 
-	printf("El ganador es el jugador %i\n",ganador);
+	escribir_archivo2(); 
+	escribir_archivo1(ganador); 
+}
+
+void escribir_archivo2() 
+{
+	FILE *salida2;
+	salida2 = fopen("salida2.csv","wt");
+	fprintf(salida2,"Etapa;Cantidad\nIF;%i\nID;%i\nEX;%i\nMEM;%i\nWB;%i\n",IF,ID,EX,MEM,WB);
+	fclose(salida2);
+}
+
+void escribir_archivo1(int ganador)
+{ 
+	FILE *salida1;
+	int index;
+	salida1 = fopen("salida1.txt","wt");
 	for (int i = 0; i < 9; ++i)
 	{
-		if(i%3 == 0)
-			printf("\n");
-		printf("|%i|",TABLERO[i]);
+		if (i%3 == 0 && i>0)
+			fprintf(salida1,"\n");
+		if (TABLERO[i] == 1)
+			fprintf(salida1,"|X|");
+		else if (TABLERO[i] == 2)
+			fprintf(salida1,"|O|");
+		else if (TABLERO[i] == 0)
+			fprintf(salida1,"| |");
 	}
-	printf("\n");
+	if (jugadores[0].tipo == ganador)
+		index = 0;
+	else
+		index = 1;
 
+	fprintf(salida1,"\n\nEl ganador es el jugador con el registro %s",jugadores[index].nombre);
+	fclose(salida1);
 }
-
-/*
-Entra: [3, 5, 7, 1, 2]
-jugada = 3
-1º ciclo i = 0
-	[5,5,7,1,2]
-2º ciclo i = 2
-	[]	
-
-	
-*/
-/*void escribir_archivo(FILE *archivo) 
-{ //Escribe los valores de los 32 registros cada vez que se le llama, que es cada vez que se ejecuta una instruccion
-	int i; //Estos valores van siendo escritos en el archivo de salida 1
-	for (i = 0; i < 31; ++i)
-		fprintf(archivo,"%d;",REGISTROS_VALOR[i]);
-	
-	fputc('\n',archivo);
-}
-
-void escribir_archivo1()
-{ //Busca que funciones si se ejecutaron y las escribe todas en unen el archivo con las lineas de instrucciones
-	int i; //que hicieron que el programa se ejecutaron, no aparecen funciones que el programa no recorrió
-	char* valor1;//Principalmente por estar en una "etiqueta" a la que nunca se llegaba
-	FILE *salida1;
-	salida1 = fopen("salida1.txt","wt");
-
-	for (i = 0; i < NINTRUCCIONES; ++i)
-	{
-		if (listaDatos[i].uso == 1)
-		{	
-			valor1 = listaDatos[i].funcion;
-			if ((strcmp(valor1,"addi"))==0 || (strcmp(valor1,"subi"))==0 || (strcmp(valor1,"add"))==0 
-				|| (strcmp(valor1,"sub"))==0 || (strcmp(valor1,"mul"))==0|| (strcmp(valor1,"div"))==0 
-				|| (strcmp(valor1,"beq"))==0)
-			
-				fprintf(salida1,"%s %s %s %s\n",listaDatos[i].funcion,listaDatos[i].dato1,listaDatos[i].dato2,listaDatos[i].dato3);
-
-			else if ((strcmp(valor1,"j"))==0)
-				fprintf(salida1,"%s %s\n",listaDatos[i].funcion,listaDatos[i].dato1);
-			
-			else if ((strcmp(valor1,"lw"))==0 || (strcmp(valor1,"sw"))==0)
-				fprintf(salida1,"%s %s %s\n",listaDatos[i].funcion,listaDatos[i].dato1,listaDatos[i].dato2);
-			
-			else
-				fprintf(salida1,"%s\n",listaDatos[i].funcion);
-		}
-	}
-}*/
 void recibirNombreArchivo() 
 { //Esta función es la que se encarga de pedirle al usuario el nombre de cada uno de los archivos de entrada
 	FILE* arch; //Almacenandolos en NOMBRE_ARCHIVO_1 y NOMBRE_ARCHIVO_2 respectivamente, siendo
 	NOMBRE_ARCHIVO_1 = (char*)malloc(sizeof(char)*25);//Estas variables globales definidas en las definiciones
-	//NOMBRE_ARCHIVO_2 = (char*)malloc(sizeof(char)*25);
 	printf("Para comenzar primero se necesita el nombre de sus dos archivos de entrada junto a su formato\n");
 	printf("Por ejemplo 'entrada1.txt' o prueba1.txt\n\nRecuerde que el primero es el que contiene las instrucciones y el segundo las lineas de control\n");
 	do
@@ -460,27 +377,11 @@ void recibirNombreArchivo()
 		
 	} while (arch == NULL);
 	fclose(arch);
-	//Los do-while en ambos casos son para verificar que se haya hecho un correcto ingreso de los
-	//Nombres de los archivos y si no existe un archivo con el nombre ingresado se pedirá nuevamente
-	/*do
-	{
-		printf("\nIngrese el nombre del segundo archivo solicitado: ");
-		scanf("%s",NOMBRE_ARCHIVO_2);
-		while(getchar()!='\n');
-		arch = fopen(NOMBRE_ARCHIVO_2,"r");
-		
-		if (arch == NULL) 
-			printf("No se encuentra archivo con ese nombre, intente nuevamente\n");
-		
-	} while (arch == NULL);
-	fclose(arch);*/
 }
 //Función encargada de liberar la memoria que se ocupó durante el procedimiento
 void liberarMemoria()
 {
 	free(listaDatos);
-	free(REGISTROS_VALOR);
 	free(TABLERO);
 	free(NOMBRE_ARCHIVO_1);
-	free(NOMBRE_ARCHIVO_2);
 }
