@@ -12,12 +12,11 @@ struct Datos
 	char dato1[10];
 	char dato2[10];
 	char dato3[10];
-	char estado;
 };
 
 struct Jugadores
 {
-	char nombre[10];
+	char nombre[5];
 	int tipo;
 	int jugadas[5];
 	int aux;

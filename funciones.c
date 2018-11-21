@@ -243,13 +243,6 @@ void desarrolloDeInstrucciones()
 		aux1++;
 	}
 
-	for (int i = 0; i < 2; ++i)
-	{
-		printf("\nLas jugadas del jugador %i son: \n",i);
-		for (int j = 0; j < jugadores[i].aux; ++j)
-			printf("%i-",jugadores[i].jugadas[j]);
-
-	}
 	for (int i = 0; i < jugadores[0].aux; ++i)
 		TABLERO[jugadores[0].jugadas[i]] = 1;
 
@@ -278,10 +271,9 @@ void remover_jugada(int jugador, int jugada)
 int contiene(int jugador, int jugada)
 {
 	for (int i = 0; i < jugadores[jugador].aux; ++i)
-	{
 		if(jugadores[jugador].jugadas[i] == jugada)
 			return 1;
-	}
+
 	return 0;	
 }
 
@@ -322,9 +314,9 @@ void comprobarGanador()
 
 	else if(d2)	
 		ganador = TABLERO[2];
-
-	escribir_archivo2(); 
+	
 	escribir_archivo1(ganador); 
+	escribir_archivo2(); 
 }
 
 void escribir_archivo2() 
@@ -351,18 +343,23 @@ void escribir_archivo1(int ganador)
 		else if (TABLERO[i] == 0)
 			fprintf(salida1,"| |");
 	}
-	if (jugadores[0].tipo == ganador)
-		index = 0;
+	if (ganador != 0)
+	{
+		if (jugadores[0].tipo == ganador)
+			index = 0;
+		else
+			index = 1;
+		fprintf(salida1,"\n\nEl ganador es el jugador con el registro %s",jugadores[index].nombre);
+	}
 	else
-		index = 1;
+		fprintf(salida1,"\n\nNo existe ganador en esta partida");
 
-	fprintf(salida1,"\n\nEl ganador es el jugador con el registro %s",jugadores[index].nombre);
 	fclose(salida1);
 }
 void recibirNombreArchivo() 
-{ //Esta función es la que se encarga de pedirle al usuario el nombre de cada uno de los archivos de entrada
-	FILE* arch; //Almacenandolos en NOMBRE_ARCHIVO_1 y NOMBRE_ARCHIVO_2 respectivamente, siendo
-	NOMBRE_ARCHIVO_1 = (char*)malloc(sizeof(char)*25);//Estas variables globales definidas en las definiciones
+{
+	FILE* arch;
+	NOMBRE_ARCHIVO_1 = (char*)malloc(sizeof(char)*25);
 	printf("Para comenzar primero se necesita el nombre de sus dos archivos de entrada junto a su formato\n");
 	printf("Por ejemplo 'entrada1.txt' o prueba1.txt\n\nRecuerde que el primero es el que contiene las instrucciones y el segundo las lineas de control\n");
 	do
