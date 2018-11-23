@@ -6,6 +6,13 @@
 #include <math.h>
 #include <stdbool.h>
 
+/*
+ * En este archivo se encuentran las cabeceras de las funciones, las estructuras utilizadas
+   y la declaración de las variables globales que se usan durante el programa
+ * @author: Valentina Ligueño
+ * @version: 23/11/2018
+ */
+
 struct Datos
 {
 	char funcion[10];
@@ -16,10 +23,10 @@ struct Datos
 
 struct Jugadores
 {
-	char nombre[5];
+	char registro[5];
 	int tipo;
-	int jugadas[5];
-	int aux;
+	int jugadas[6];
+	int numJugadas;
 };
 
 typedef struct Datos Datos;
@@ -38,14 +45,16 @@ int EX;
 int MEM;
 int WB;
 
-void escribir_archivo1(int);
-void escribir_archivo2();
+void recibirNombreArchivo();
 void leerArchivosYGuardarDatos();
+void identificandoFormato(int,int);
 void asignando_jugador();
 void desarrolloDeInstrucciones();
-void recibirNombreArchivo();
-void liberarMemoria();
-void identificandoFormato(int,int);
 void remover_jugada(int , int );
 int contiene(int , int );
 void comprobarGanador();
+void escribir_archivo1(int);
+void escribir_archivo2();
+char* recibirNombreArchivoSalida(int,char*);
+void liberarMemoria();
+
